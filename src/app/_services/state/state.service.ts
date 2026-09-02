@@ -28,6 +28,10 @@ export class StateService {
   private _academicTermSelected: string = null;
   private _degreeIDSelected: number = null;
   private _selectedCourses: Course[] = null;
+  // Pristine copy of the homepage selection. Unlike _selectedCourses, this
+  // snapshot is never prepared/filtered for schedule generation and can
+  // therefore be used to restore courses from multiple degrees safely.
+  private _selectedCoursesSnapshot: Course[] = null;
 
   private _schedulesSortedByMostCompact: Schedule[] = null;
   private _schedulesSortedByMostBalanced: Schedule[] = null;
@@ -53,6 +57,9 @@ export class StateService {
   get selectedCourses(): Course[] { return this._selectedCourses; }
   set selectedCourses(value: Course[]) { this._selectedCourses = value; }
 
+  get selectedCoursesSnapshot(): Course[] { return this._selectedCoursesSnapshot; }
+  set selectedCoursesSnapshot(value: Course[]) { this._selectedCoursesSnapshot = value; }
+
   get academicTermSelected(): string { return this._academicTermSelected; }
   set academicTermSelected(value: string) { this._academicTermSelected = value; }
 
@@ -73,7 +80,9 @@ export class StateService {
            this._degreesRepository.size !== 0 &&
            this._coursesRepository.size !== 0 &&
            this._academicTermSelected !== null &&
-           this._degreeIDSelected !== null;
+           this._degreeIDSelected !== null &&
+           this._selectedCourses !== null &&
+           this._selectedCoursesSnapshot !== null;
   }
 
   hasCourseInDegree(academicTerm: string, degreeID: number, courseID: number): boolean {
